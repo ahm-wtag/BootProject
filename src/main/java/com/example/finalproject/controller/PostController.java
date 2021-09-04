@@ -1,16 +1,13 @@
 package com.example.finalproject.controller;
 
 
-import com.example.finalproject.entity.Post;
-import com.example.finalproject.exception.ApiRequestException;
-import com.example.finalproject.model.PostUpdateDTO;
-import com.example.finalproject.service.PostService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.example.finalproject.model.post.*;
+import com.example.finalproject.service.post.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 
 
@@ -18,51 +15,45 @@ import javax.validation.Valid;
 @RequestMapping("/api/posts")
 public class PostController {
 
-    private static final Logger log = LoggerFactory.getLogger(PostController.class);
-
-
-    PostService postService;
+    private final PostService postService;
 
     @Autowired
-    public PostController( PostService postService ) {
+    public PostController(PostService postService) {
         this.postService = postService;
     }
 
-
-
     @GetMapping
-    public ResponseEntity<Iterable<Post>> findAll() {
-        try {
-            return new ResponseEntity<>(postService.findAll(), HttpStatus.OK);
-        } catch (Exception e) {
-            log.warn("exception here");
-            throw new ApiRequestException(e.getMessage(), e);
-        }
+    public ResponseEntity<Iterable<PostReadDTO>> findAll() {
+        return new ResponseEntity<>(postService.findAll(), HttpStatus.OK);
     }
 
-
     @PostMapping
-    public ResponseEntity<Post> create(@Valid @RequestBody Post post) {
-
-        Post savedPost = postService.save(post);
+    public ResponseEntity<PostReadDTO> create(@Valid @RequestBody PostWriteDTO postWriteDTO) {
+        PostReadDTO savedPost = postService.save(postWriteDTO);
         return new ResponseEntity<>(savedPost, HttpStatus.CREATED);
-
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<Post> findPost(@PathVariable("postId") Long postId) {
+    public ResponseEntity<PostReadDTO> findPost(@PathVariable Long postId) {
         return new ResponseEntity<>(postService.findById(postId), HttpStatus.OK);
     }
 
-
     @PutMapping("/{postId}")
-    public ResponseEntity<Post> update(@Valid @RequestBody PostUpdateDTO newPost, @PathVariable("postId") Long postId) {
-        Post updatedPost = postService.update(newPost, postId);
+    public ResponseEntity<PostReadDTO> update(@Valid @RequestBody PostWriteDTO newPost, @PathVariable Long postId) {
+        PostReadDTO updatedPost = postService.update(newPost, postId);
         return new ResponseEntity<>(updatedPost, HttpStatus.OK);
     }
 
+    @PatchMapping("/{postId}")
+    public ResponseEntity<PostPartialReadDTO> partialUpdate(@Valid @RequestBody PostPartialWriteDTO newPost,
+                                                            @PathVariable Long postId) {
+        PostPartialReadDTO updatedPost = postService.partialUpdate(newPost,postId);
+        return new ResponseEntity<>(updatedPost,HttpStatus.OK);
+    }
+
+
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Object> delete(@PathVariable("postId") Long postId) {
+    public ResponseEntity<Object> delete(@PathVariable Long postId) {
         postService.delete(postId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

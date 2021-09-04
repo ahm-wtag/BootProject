@@ -54,9 +54,7 @@
             <column  name="post_title"  type="varchar(50)">
                 <constraints  nullable="false"/>
             </column>
-            <column name="post_body" type="text">
-                <constraints nullable="false"/>
-            </column>
+            <column name="post_body" type="text"/>
             <column name="customer_id" type="int">
                 <constraints nullable="false"/>
             </column>

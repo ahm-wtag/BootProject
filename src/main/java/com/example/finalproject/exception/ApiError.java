@@ -23,7 +23,6 @@ public class ApiError {
         this.timeStamp = ZonedDateTime.now(zoneId);
     }
 
-
     public String getMessage() {
         return message;
     }
