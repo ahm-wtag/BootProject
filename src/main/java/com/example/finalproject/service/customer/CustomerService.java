@@ -1,27 +1,25 @@
 package com.example.finalproject.service.customer;
 
-import com.example.finalproject.model.customer.CustomerPartialReadDTO;
-import com.example.finalproject.model.customer.CustomerPartialWriteDTO;
-import com.example.finalproject.model.customer.CustomerReadDTO;
-import com.example.finalproject.model.customer.CustomerWriteDTO;
-import com.example.finalproject.model.post.PostReadDTO;
+import com.example.finalproject.entity.Customer;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
 
 public interface CustomerService {
 
 
-    Iterable<CustomerReadDTO> findAll();
+    List<Customer> findAll();
 
-    CustomerReadDTO findById(Long id);
+    Optional<Customer> findById(Long id);
 
-    Iterable<PostReadDTO> findCustomerPosts(Long customerId);
+    Optional<Customer> findByHandle(String username) throws EntityNotFoundException;
 
-    CustomerReadDTO save(CustomerWriteDTO customerWriteDTO);
+    Customer save(Customer customer);
 
-    CustomerReadDTO updateCustomer(CustomerWriteDTO customerWriteDTO, Long customerId);
+    Customer updateCustomer(Customer customerToUpdate, Long customerId);
 
-    CustomerPartialReadDTO partialUpdate(CustomerPartialWriteDTO customerPartialWriteDTO, Long customerId);
-
-    void delete(Long customerId);
+    void delete(Customer customerToDelete);
 
 }

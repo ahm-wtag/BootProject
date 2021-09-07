@@ -2,82 +2,66 @@ package com.example.finalproject.service.post;
 
 
 import com.example.finalproject.entity.Post;
-import com.example.finalproject.model.post.*;
 import com.example.finalproject.repository.post.PostRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Primary
 @Transactional(readOnly = true)
 public class PostServiceImpl implements PostService {
 
-
     private final PostRepository repository;
-    private final ModelMapper modelMapper;
-    private final ModelMapper modelMapperIgnoresNull;
 
     @Autowired
-    public PostServiceImpl(PostRepository repository,
-                           @Qualifier("postModelMapper") ModelMapper modelMapper,
-                           @Qualifier("postModelMapperIgnoresNull") ModelMapper modelMapperIgnoresNull) {
+    public PostServiceImpl(PostRepository repository) {
+
         this.repository = repository;
-        this.modelMapper = modelMapper;
-        this.modelMapperIgnoresNull = modelMapperIgnoresNull;
+
     }
 
+    public List<Post> findPostsByCustomer(Long customerId) {
 
-    public Iterable<PostReadDTO> findPostsByCustomer(Long customerId) {
-        return repository.findPostsByCustomer(customerId)
-                .stream()
-                .map(post -> modelMapper.map(post, PostReadDTO.class))
-                .collect(Collectors.toList());
+        return repository.findPostsByCustomer(customerId);
+
     }
 
-    public PostReadDTO findById(Long postId) {
-        Post postToFind = repository.findById(postId);
-        return modelMapper.map(postToFind, PostReadDTO.class);
+    public Optional<Post> findById(Long postId) {
+
+        return repository.findById(postId);
+
     }
 
-    public Iterable<PostReadDTO> findAll() {
-        return repository.findAll().stream()
-                .map(post -> modelMapper.map(post, PostReadDTO.class))
-                .collect(Collectors.toList());
-    }
+    public List<Post> findAll() {
 
-    @Transactional
-    public PostReadDTO save(PostWriteDTO postWriteDTO) {
-        Post postToSave = modelMapper.map(postWriteDTO, Post.class);
-        postToSave.setId(null); // mapper put's customerId to post.Id and thus it become detatched
-        Post savedPost = repository.save(postToSave);
-        return modelMapper.map(savedPost, PostReadDTO.class);
+        return repository.findAll();
+
     }
 
     @Transactional
-    public PostReadDTO update(PostWriteDTO postWriteDTO, Long postId) {
-        Post postToUpdate = modelMapper.map(postWriteDTO, Post.class);
-        postToUpdate.setId(null);
-        Post updatedPost = repository.update(postToUpdate, postId);
-        return modelMapper.map(updatedPost, PostReadDTO.class);
+    public Post save(Post postToSave) {
+
+        return repository.save(postToSave);
+
     }
 
     @Transactional
-    public PostPartialReadDTO partialUpdate(PostPartialWriteDTO postPartialWriteDTO,
-                                            Long postId) {
-        Post postToUpdate = modelMapperIgnoresNull.map(postPartialWriteDTO, Post.class);
-        Post updatedPost = repository.partialUpdate(postToUpdate, postId);
-        return modelMapperIgnoresNull.map(updatedPost, PostPartialReadDTO.class);
+    public Post update(Post newPost, Long postId) {
+
+        return repository.update(newPost, postId);
+
     }
 
     @Transactional
-    public void delete(Long postId) {
-        repository.delete(postId);
+    public void delete(Post postToDelete) {
+
+        repository.delete(postToDelete);
+
     }
 
 }

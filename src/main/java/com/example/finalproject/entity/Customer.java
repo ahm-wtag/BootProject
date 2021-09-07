@@ -37,6 +37,10 @@ public class Customer {
     @Column(name = "customer_last_name")
     private String lastName;
 
+    @Column(name = "customer_role")
+    @NotNull
+    private String role;
+
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Post> postList = new ArrayList<>();
 

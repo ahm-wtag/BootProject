@@ -42,6 +42,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="customer_last_name" type="varchar(100)"/>
+            <column name="customer_role" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 

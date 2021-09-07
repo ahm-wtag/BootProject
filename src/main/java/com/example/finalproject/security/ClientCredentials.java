@@ -1,4 +1,4 @@
-package com.example.finalproject.jwt;
+package com.example.finalproject.security;
 
 import lombok.Data;
 

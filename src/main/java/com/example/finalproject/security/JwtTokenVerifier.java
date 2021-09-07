@@ -1,13 +1,11 @@
-package com.example.finalproject.jwt;
+package com.example.finalproject.security;
 
 import com.example.finalproject.exception.ApiRequestException;
 import com.google.common.base.Strings;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,24 +26,30 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest httpServletRequest,
                                     HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
+
         String authorizationHeader = httpServletRequest.getHeader("Authorization");
 
         if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(httpServletRequest,httpServletResponse);
             return;
         }
-//        TODO fix from the video
+
         String token = authorizationHeader.replace("Bearer ", "");
         final String key = "securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecurerasd";
 
         try {
+
             Jws<Claims> claimsJws = Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8)))
                     .build()
                     .parseClaimsJws(token);
+
             Claims body = claimsJws.getBody();
+
             String username = body.getSubject();
-            List<Map<String,String>> authorityList = (List<Map<String,String>> )body.get("roles");
+
+            List<Map<String,String>> authorityList = (List<Map<String,String>>)body.get("roles");
+
             Set<SimpleGrantedAuthority> authorities = authorityList.stream()
                     .map(m -> new SimpleGrantedAuthority( m.get("authority") ) )
                     .collect(Collectors.toSet());
@@ -58,8 +62,8 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
         } catch ( JwtException e ) {
-//            TODO find a way to throw exception
             throw new ApiRequestException(String.format("Invalid token value: %s",token));
         }
 

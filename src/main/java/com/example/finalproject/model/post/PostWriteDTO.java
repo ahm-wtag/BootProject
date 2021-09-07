@@ -1,5 +1,6 @@
 package com.example.finalproject.model.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -14,7 +15,7 @@ public class PostWriteDTO {
 
     private String body;
 
-    @NotNull
+    @JsonIgnore
     private Long customerId;
 
 }

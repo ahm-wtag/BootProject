@@ -1,10 +1,11 @@
 package com.example.finalproject.model.customer;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
-public class CustomerReadDTO {
+public class CustomerDTO {
 
     private Long id;
 
@@ -12,11 +13,15 @@ public class CustomerReadDTO {
 
     private String email;
 
+    @JsonIgnore
     private String password;
 
     private String firstName;
 
     private String lastName;
+
+    @JsonIgnore
+    private String role;
 
 
 }

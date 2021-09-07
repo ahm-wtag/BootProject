@@ -2,8 +2,8 @@ package com.example.finalproject.repository.post;
 
 import com.example.finalproject.entity.Post;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository {
 
@@ -11,14 +11,12 @@ public interface PostRepository {
 
     List<Post> findAll();
 
-    Post findById(Long postId);
+    Optional<Post> findById(Long postId);
 
-    Collection<Post> findPostsByCustomer(Long customerId);
+    List<Post> findPostsByCustomer(Long customerId);
 
     Post update(Post newPost, Long postId);
 
-    Post partialUpdate(Post newPost, Long postId);
-
-    void delete(Long postId);
+    void delete(Post postToDelete);
 
 }

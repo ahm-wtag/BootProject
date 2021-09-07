@@ -2,21 +2,14 @@ package com.example.finalproject.service.customer;
 
 
 import com.example.finalproject.entity.Customer;
-import com.example.finalproject.model.customer.CustomerPartialReadDTO;
-import com.example.finalproject.model.customer.CustomerPartialWriteDTO;
-import com.example.finalproject.model.customer.CustomerWriteDTO;
-import com.example.finalproject.model.customer.CustomerReadDTO;
-import com.example.finalproject.model.post.PostReadDTO;
 import com.example.finalproject.repository.customer.CustomerRepository;
-import com.example.finalproject.service.post.PostService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Primary
@@ -25,63 +18,50 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    private final ModelMapper modelMapper;
-    private final ModelMapper modelMapperIgnoresNull;
-
-    private final PostService postService;
-
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository,
-                               PostService postService,
-                               @Qualifier("customerModelMapper") ModelMapper modelMapper,
-                               @Qualifier("customerModelMapperIgnoresNull") ModelMapper modelMapperIgnoresNull) {
+    public CustomerServiceImpl(CustomerRepository customerRepository) {
+
         this.customerRepository = customerRepository;
-        this.postService = postService;
-        this.modelMapper = modelMapper;
-        this.modelMapperIgnoresNull = modelMapperIgnoresNull;
+
     }
 
-    public Iterable<CustomerReadDTO> findAll() {
-        return customerRepository.findAll()
-                .stream()
-                .map(customer -> modelMapper.map(customer, CustomerReadDTO.class))
-                .collect(Collectors.toList());
+    public List<Customer> findAll() {
+
+        return customerRepository.findAll();
+
     }
 
-    public CustomerReadDTO findById(Long customerId) {
-        Customer customerToFind = customerRepository.findById(customerId);
-        return modelMapper.map(customerToFind, CustomerReadDTO.class);
+    public Optional<Customer> findById(Long customerId) {
+        return customerRepository.findById(customerId);
     }
 
-    public Iterable<PostReadDTO> findCustomerPosts(Long customerId) {
-        Customer validCustomer = customerRepository.findById(customerId);
-        return postService.findPostsByCustomer(validCustomer.getId());
+    public Optional<Customer> findByHandle(String username) {
+
+        return customerRepository.findByHandle(username);
+
     }
 
     @Transactional
-    public CustomerReadDTO save(CustomerWriteDTO customerWriteDTO) {
-        Customer customerToSave = modelMapper.map(customerWriteDTO, Customer.class);
-        Customer savedCustomer = customerRepository.save(customerToSave);
-        return modelMapper.map(savedCustomer, CustomerReadDTO.class);
+    public Customer save(Customer customerToSave) {
+
+        customerToSave.setRole("USER");
+
+        return customerRepository.save(customerToSave);
+
     }
 
     @Transactional
-    public CustomerReadDTO updateCustomer(CustomerWriteDTO customerWriteDTO, Long customerId) {
-        Customer customerToUpdate = modelMapper.map(customerWriteDTO, Customer.class);
-        Customer updatedCustomer = customerRepository.updateCustomer(customerToUpdate, customerId);
-        return modelMapper.map(updatedCustomer, CustomerReadDTO.class);
+    public Customer updateCustomer(Customer customerToUpdate, Long customerId) {
+
+        return customerRepository.updateCustomer(customerToUpdate, customerId);
+
     }
 
     @Transactional
-    public CustomerPartialReadDTO partialUpdate(CustomerPartialWriteDTO customerPartialWriteDTO, Long customerId) {
-        Customer customerToUpdate = modelMapperIgnoresNull.map(customerPartialWriteDTO, Customer.class);
-        Customer updatedCustomer = customerRepository.partialUpdate(customerToUpdate, customerId);
-        return modelMapperIgnoresNull.map(updatedCustomer, CustomerPartialReadDTO.class);
-    }
+    public void delete(Customer customerToDelete) {
 
-    @Transactional
-    public void delete(Long customerId) {
-        customerRepository.delete(customerId);
+        customerRepository.delete(customerToDelete);
+
     }
 
 }

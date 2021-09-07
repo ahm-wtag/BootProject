@@ -1,26 +1,24 @@
 package com.example.finalproject.service.post;
 
-import com.example.finalproject.model.post.PostPartialReadDTO;
-import com.example.finalproject.model.post.PostPartialWriteDTO;
-import com.example.finalproject.model.post.PostReadDTO;
-import com.example.finalproject.model.post.PostWriteDTO;
+import com.example.finalproject.entity.Post;
+
+import java.util.List;
+import java.util.Optional;
 
 
 public interface PostService {
 
-    PostReadDTO save(PostWriteDTO postWriteDTO);
+    Post save(Post postWriteDTO);
 
-    Iterable<PostReadDTO> findAll();
+    List<Post> findAll();
 
-    PostReadDTO findById(Long postId);
+    Optional<Post> findById(Long postId);
 
-    Iterable<PostReadDTO> findPostsByCustomer(Long customerId);
+    List<Post> findPostsByCustomer(Long customerId);
 
-    PostReadDTO update(PostWriteDTO newPost, Long postId);
+    Post update(Post oldPost, Long postId);
 
-    PostPartialReadDTO partialUpdate(PostPartialWriteDTO newPost, Long postId);
-
-    void delete(Long postId);
+    void delete(Post postToDelete);
 
 
 }
