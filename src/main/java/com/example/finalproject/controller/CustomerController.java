@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/customers")
-@CrossOrigin( origins = "http://localhost:4200")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -53,19 +52,34 @@ public class CustomerController {
 
     }
 
-    @GetMapping("/{customerId}")
-    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable Long customerId) {
+//    @GetMapping("/{customerId}")
+//    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable Long customerId) {
+//
+//        Optional<Customer> optionalCustomerToFind = customerService.findById(customerId);
+//
+//        return optionalCustomerToFind
+//                .map(customer -> {
+//                    CustomerDTO foundCustomer = modelMapper.map(customer, CustomerDTO.class);
+//                    return new ResponseEntity<>(foundCustomer, HttpStatus.OK);
+//                })
+//                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+//
+//    }
 
-        Optional<Customer> optionalCustomerToFind = customerService.findById(customerId);
 
-        return optionalCustomerToFind
+    @GetMapping("/{userName}")
+    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable String userName) {
+
+        Optional<Customer> optionalCustomer = customerService.findByHandle(userName);
+
+        return optionalCustomer
                 .map(customer -> {
                     CustomerDTO foundCustomer = modelMapper.map(customer, CustomerDTO.class);
                     return new ResponseEntity<>(foundCustomer, HttpStatus.OK);
                 })
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
     }
+
 
     @GetMapping("/{customerId}/posts")
     public ResponseEntity<List<PostDTO>> getCustomerPosts(@PathVariable Long customerId) {

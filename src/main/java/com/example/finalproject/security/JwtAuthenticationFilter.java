@@ -1,10 +1,13 @@
 package com.example.finalproject.security;
 
+import com.example.finalproject.entity.Customer;
+import com.example.finalproject.service.customer.CustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -63,6 +66,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
 
         final String key = "securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecurerasd";
+
         String token = Jwts.builder()
                 .setSubject(authResult.getName())
                 .claim("roles", authResult.getAuthorities())
@@ -86,7 +90,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         final String MESSAGE = "{\"error\": \"Invalid credentials\"}";
 
-        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
         JsonObject jsonObject = new Gson().fromJson(MESSAGE,JsonObject.class);
 

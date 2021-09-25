@@ -2,7 +2,6 @@ package com.example.finalproject.exception;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.postgresql.util.PSQLException;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @RestControllerAdvice
@@ -69,19 +69,15 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+    public ResponseEntity<ApiError> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
 
-        String message = e.getMessage();
+        return Optional.ofNullable(e.getMessage())
+                .map( errorMsg -> {
+                    String message = e.getMessage().contains("customer_handle") ? "Username Already Exists": "Email already in use";
+                    ApiError error = new ApiError(message);
+                    return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
 
-        for (Throwable exc = e.getCause(); exc != null; exc = exc.getCause()) {
-            if (exc.getClass() == PSQLException.class) {
-                message = exc.getMessage();
-                break;
-            }
-        }
-
-        log.warn("In handleDataIntegrityViolationException: " + message);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }).orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
 
     }
 

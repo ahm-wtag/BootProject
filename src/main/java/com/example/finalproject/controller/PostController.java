@@ -6,6 +6,7 @@ import com.example.finalproject.model.post.*;
 import com.example.finalproject.service.post.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,10 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
 @RestController
 @RequestMapping("/api/posts")
-@CrossOrigin( origins = "http://localhost:4200")
+@CrossOrigin( origins = "http://http://localhost:4200/", methods = {RequestMethod.GET, RequestMethod.POST})
 public class PostController {
 
     private final PostService postService;
@@ -71,3 +71,4 @@ public class PostController {
     }
 
 }
+
