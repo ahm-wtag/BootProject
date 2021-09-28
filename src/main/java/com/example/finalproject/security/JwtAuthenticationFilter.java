@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             ClientCredentials credentials = new ObjectMapper().readValue(request.getInputStream(), ClientCredentials.class);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    credentials.getUsername(),
+                    credentials.getHandle(),
                     credentials.getPassword()
             );
 
