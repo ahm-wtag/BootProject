@@ -3,10 +3,12 @@ package com.example.finalproject.controller;
 
 import com.example.finalproject.entity.Customer;
 import com.example.finalproject.entity.Post;
-import com.example.finalproject.model.customer.CustomerWriteDTO;
-import com.example.finalproject.model.customer.CustomerDTO;
+import com.example.finalproject.model.customer.CustomerInput;
+import com.example.finalproject.model.customer.CustomerOutput;
+import com.example.finalproject.model.customer.CustomerPartialInput;
 import com.example.finalproject.model.post.PostDTO;
 import com.example.finalproject.model.post.PostWriteDTO;
+import com.example.finalproject.repository.customer.CustomerRepository;
 import com.example.finalproject.service.customer.CustomerService;
 import com.example.finalproject.service.post.PostService;
 import org.modelmapper.ModelMapper;
@@ -41,43 +43,30 @@ public class CustomerController {
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<CustomerDTO>> findAll() {
+    public ResponseEntity<List<CustomerOutput>> findAll() {
 
-        List<CustomerDTO> customerDTOList = customerService.findAll()
-                .stream()
-                .map(customer -> modelMapper.map(customer, CustomerDTO.class))
-                .collect(Collectors.toList());
+        List<CustomerOutput> customerOutputList = customerService.findAllOutput();
 
-        return new ResponseEntity<>(customerDTOList, HttpStatus.OK);
+        return ResponseEntity.ok(customerOutputList);
 
     }
 
 //    @GetMapping("/{customerId}")
-//    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable Long customerId) {
+//    public ResponseEntity<Customer> getCustomer(@PathVariable Long customerId, @Autowired CustomerRepository repository) {
 //
-//        Optional<Customer> optionalCustomerToFind = customerService.findById(customerId);
-//
-//        return optionalCustomerToFind
-//                .map(customer -> {
-//                    CustomerDTO foundCustomer = modelMapper.map(customer, CustomerDTO.class);
-//                    return new ResponseEntity<>(foundCustomer, HttpStatus.OK);
-//                })
-//                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+//        return new ResponseEntity<>(repository.getById(customerId),HttpStatus.OK);
 //
 //    }
 
-
     @GetMapping("/{userName}")
-    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable String userName) {
+    public ResponseEntity<CustomerOutput> getCustomerByHandle(@PathVariable String userName) {
 
-        Optional<Customer> optionalCustomer = customerService.findByHandle(userName);
+        Optional<CustomerOutput> optionalCustomer = customerService.findByHandleOutput(userName);
 
         return optionalCustomer
-                .map(customer -> {
-                    CustomerDTO foundCustomer = modelMapper.map(customer, CustomerDTO.class);
-                    return new ResponseEntity<>(foundCustomer, HttpStatus.OK);
-                })
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+
     }
 
 
@@ -104,13 +93,11 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerDTO> create(@Valid @RequestBody CustomerWriteDTO customerWriteDTO) {
+    public ResponseEntity<CustomerOutput> create(@Valid @RequestBody CustomerInput customerInput) {
 
-        Customer customerToSave = modelMapper.map(customerWriteDTO, Customer.class);
+        CustomerOutput createdCustomerOutput = customerService.createAndOutput(customerInput);
 
-        CustomerDTO savedCustomerDTO = modelMapper.map(customerService.save(customerToSave), CustomerDTO.class);
-
-        return new ResponseEntity<>(savedCustomerDTO, HttpStatus.CREATED);
+        return ResponseEntity.ok(createdCustomerOutput);
 
     }
 
@@ -132,23 +119,16 @@ public class CustomerController {
     }
 
 
-    @PutMapping("/{customerId}")
+    @PatchMapping("/{customerId}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN') or @securityUtil.authorizationCheck(principal,#customerId)")
-    public ResponseEntity<CustomerDTO> update(@Valid @RequestBody CustomerWriteDTO newCustomer, @PathVariable Long customerId) {
+    public ResponseEntity<CustomerOutput> update(@Valid @RequestBody CustomerPartialInput customerUpdates, @PathVariable Long customerId) {
 
-        Customer customerUpdates = modelMapper.map(newCustomer, Customer.class);
-
-        Customer updatedCustomer = customerService.updateCustomer(customerUpdates, customerId);
-
-        CustomerDTO updatedCustomerDTO = modelMapper.map(updatedCustomer, CustomerDTO.class);
-
-        if (updatedCustomerDTO.getId().equals(customerId)) {
-            return new ResponseEntity<>(updatedCustomerDTO, HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(updatedCustomerDTO, HttpStatus.CREATED);
+        return customerService.updateCustomerAndOutput(customerUpdates,customerId)
+                .map(ResponseEntity::ok)
+                .orElseGet(()->ResponseEntity.notFound().build());
 
     }
+
 
     @PutMapping("/{customerId}/posts/{postId}")
     @PreAuthorize("@securityUtil.authorizationCheck(principal,#customerId)")
@@ -216,8 +196,9 @@ public class CustomerController {
         return customerToDelete
                 .map(customer -> {
                     customerService.delete(customer);
-                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-                }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                    return ResponseEntity.noContent().build();
+                })
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
 

@@ -1,24 +1,14 @@
 package com.example.finalproject.repository.customer;
 
 import com.example.finalproject.entity.Customer;
-import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
-@NoRepositoryBean
-public interface CustomerRepository {
-
-    List<Customer> findAll();
-
-    Optional<Customer> findById(Long id);
+@Repository
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     Optional<Customer> findByHandle(String handle);
-
-    Customer save(Customer customer);
-
-    Customer updateCustomer(Customer customer, Long customerId);
-
-    void delete(Customer customer);
 
 }

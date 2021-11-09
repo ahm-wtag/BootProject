@@ -56,23 +56,23 @@ public class ResourceSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder(10);
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(ImmutableList.of("http://localhost:4200"));
-        configuration.setAllowedMethods(ImmutableList.of("HEAD",
-                "GET", "POST", "PUT", "DELETE", "PATCH"));
-
-        configuration.setAllowCredentials(true);
-
-        configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Content-Type"));
-
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
-
-    }
+////    @Bean
+//    CorsConfigurationSource corsConfigurationSource() {
+//        final CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(ImmutableList.of("http://localhost:4200"));
+//        configuration.setAllowedMethods(ImmutableList.of("HEAD",
+//                "GET", "POST", "PUT", "DELETE", "PATCH","OPTIONS"));
+//
+//        configuration.setAllowCredentials(true);
+//
+//        configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Content-Type"));
+//
+//        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//
+//        return source;
+//
+//    }
 
 
 

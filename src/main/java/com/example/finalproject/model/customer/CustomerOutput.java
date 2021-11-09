@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
-public class CustomerDTO {
+public class CustomerOutput {
 
     private Long id;
 
