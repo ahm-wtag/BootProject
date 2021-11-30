@@ -1,81 +1,76 @@
 package com.example.finalproject.repository.post;
 
-
-import com.example.finalproject.entity.Post;
-import org.springframework.stereotype.Repository;
-
-import javax.persistence.*;
 import java.util.List;
 import java.util.Optional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
+import org.springframework.stereotype.Repository;
+
+import com.example.finalproject.entity.Post;
 
 @Repository
 public class PostRepositoryImpl implements PostRepository {
 
-    @PersistenceContext
-    EntityManager entityManager;
+  @PersistenceContext
+  EntityManager entityManager;
 
-    public Post save(Post post) {
+  public Post save(Post post) {
 
-        entityManager.persist(post);
+    entityManager.persist(post);
 
-        return post;
+    return post;
+  }
 
-    }
+  public List<Post> findAll() {
 
-    public List<Post> findAll() {
+    TypedQuery<Post> query = entityManager.createQuery("SELECT post from Post post", Post.class);
 
-        TypedQuery<Post> query = entityManager.createQuery("SELECT post from Post post", Post.class);
+    return query.getResultList();
+  }
 
-        return query.getResultList();
+  public Optional<Post> findById(Long postId) {
 
-    }
+    return Optional.ofNullable(entityManager.find(Post.class, postId));
+  }
 
-    public Optional<Post> findById(Long postId) {
+  public List<Post> findPostsByCustomer(Long customerId) {
 
-        return Optional.ofNullable(entityManager.find(Post.class, postId));
+    TypedQuery<Post> query = entityManager.createQuery("SELECT p from Post p where p.customer.id=:customerId",
+        Post.class);
+    query.setParameter("customerId", customerId);
+    return query.getResultList();
+  }
 
-    }
+  public Post update(Post newPost, Long postId) {
 
-    public List<Post> findPostsByCustomer(Long customerId) {
+    Optional<Post> postToUpdate = Optional.ofNullable(entityManager.find(Post.class, postId));
 
-        TypedQuery<Post> query = entityManager.createQuery("SELECT p from Post p where p.customer.id=:customerId",Post.class);
-        query.setParameter("customerId", customerId);
-        return query.getResultList();
+    newPost.setId(null);
 
-    }
+    return postToUpdate.map(post -> {
 
-    public Post update(Post newPost, Long postId) {
+          post.setBody(newPost.getBody());
+          post.setTitle(newPost.getTitle());
 
-        Optional<Post> postToUpdate = Optional.ofNullable(entityManager.find(Post.class, postId));
+          entityManager.merge(post);
 
-        newPost.setId(null);
+          return post;
+        })
+        .orElseGet(() -> {
 
-        return postToUpdate.map(post -> {
+          entityManager.persist(newPost);
 
-            post.setBody(newPost.getBody());
-            post.setTitle(newPost.getTitle());
-
-            entityManager.merge(post);
-
-            return post;
-
-        }).orElseGet(() -> {
-
-            entityManager.persist(newPost);
-
-            return newPost;
-
+          return newPost;
         });
+  }
 
-    }
+  public void delete(Post postToDelete) {
 
-    public void delete(Post postToDelete) {
+    postToDelete = (entityManager.contains(postToDelete)) ? postToDelete : entityManager.merge(postToDelete);
 
-        postToDelete = (entityManager.contains(postToDelete)) ? postToDelete: entityManager.merge(postToDelete);
-
-        entityManager.remove(postToDelete);
-
-    }
-
-
+    entityManager.remove(postToDelete);
+  }
 }

@@ -1,39 +1,36 @@
 package com.example.finalproject.service.customer;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.example.finalproject.entity.Customer;
 import com.example.finalproject.model.customer.CustomerInput;
 import com.example.finalproject.model.customer.CustomerOutput;
 import com.example.finalproject.model.customer.CustomerPartialInput;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
-import java.util.Optional;
-
-
 public interface CustomerService {
 
-    Customer mapToEntity(CustomerInput customerInput);
+  Customer mapToEntity(CustomerInput customerInput);
 
-    CustomerOutput mapToOutput(Customer customer);
+  CustomerOutput mapToOutput(Customer customer);
 
-    List<CustomerOutput> findAllOutput();
+  List<CustomerOutput> findAllOutput();
 
-    List<Customer> findAll();
+  List<Customer> findAll();
 
-    Optional<Customer> findById(Long id);
+  Optional<Customer> findById(Long id);
 
-    Optional<Customer> findByHandle(String username);
+  Optional<Customer> findByHandle(String username);
 
-    Optional<CustomerOutput> findByHandleOutput(String username);
+  Optional<CustomerOutput> findByHandleOutput(String username);
 
-    Customer create(Customer customerToCreate);
+  Customer create(Customer customerToCreate);
 
-    CustomerOutput createAndOutput(CustomerInput customerInput);
+  CustomerOutput createAndOutput(CustomerInput customerInput);
 
-    Optional<Customer> updateCustomer(CustomerPartialInput customerInput, Long customerId);
+  Optional<Customer> updateCustomer(CustomerPartialInput customerInput, Long customerId);
 
-    Optional<CustomerOutput> updateCustomerAndOutput(CustomerPartialInput customerInput, Long customerId);
+  Optional<CustomerOutput> updateCustomerAndOutput(CustomerPartialInput customerInput, Long customerId);
 
-    void delete(Customer customerToDelete);
-
+  void delete(Customer customerToDelete);
 }

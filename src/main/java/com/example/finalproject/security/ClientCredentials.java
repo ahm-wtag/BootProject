@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class ClientCredentials {
-    private String handle;
-    private String password;
+  private String handle;
+  private String password;
 }

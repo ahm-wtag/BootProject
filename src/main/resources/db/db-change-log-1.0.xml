@@ -1,83 +1,81 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<databaseChangeLog  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 
-                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-
-
-<!--Contents
-
-    - create-tag-version1
-    - customer-create
-    - post-create
-    - post-add-foreignKey
-    - create-tag-version2
-    - session-create
-    - session-add-foreignKey
-
--->
-
-<!--Tagging database -->
-    <changeSet id="create-tag-version1" author="mahdi">
-        <tagDatabase tag="version1"/>
-    </changeSet>
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
 
-    <!--CREATE TABLE customer -->
-    <changeSet  id="customer-create"  author="mahdi" >
-        <createTable  tableName="customer">
-            <column name="customer_id"  type="int" autoIncrement="true">
-                <constraints  primaryKey="true" nullable="false"/>
-            </column>
-            <column name="customer_handle"  type="varchar(100)">
-                <constraints  nullable="false" unique="true"/>
-            </column>
-            <column name="customer_email" type="varchar(100)">
-                <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="customer_password" type="varchar(50)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="customer_first_name" type="varchar(100)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="customer_last_name" type="varchar(100)"/>
-            <column name="customer_role" type="varchar(50)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
+  <!--Contents
 
-<!-- Create table post-->
-    <changeSet  id="post-create"  author="mahdi" >
-        <createTable  tableName="post">
-            <column  name="post_id"  type="int" autoIncrement="true">
-                <constraints  primaryKey="true"  nullable="false"/>
-            </column>
-            <column  name="post_title"  type="varchar(50)">
-                <constraints  nullable="false"/>
-            </column>
-            <column name="post_body" type="text"/>
-            <column name="customer_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
+      - create-tag-version1
+      - customer-create
+      - post-create
+      - post-add-foreignKey
+      - create-tag-version2
+      - session-create
+      - session-add-foreignKey
 
-<!--Add foreign key to post  -->
-    <changeSet  id="post-add-foreignKey"  author="mahdi" >
-        <addForeignKeyConstraint baseTableName="post" baseColumnNames="customer_id"
-                                 constraintName="FK_customer" referencedTableName="customer"
-                                 referencedColumnNames="customer_id"/>
-    </changeSet>
+  -->
+
+  <!--Tagging database -->
+  <changeSet id="create-tag-version1" author="mahdi">
+    <tagDatabase tag="version1"/>
+  </changeSet>
 
 
-<!--    Add tag version2 -->
-    <changeSet id="create-tag-version2" author="mahdi">
-        <tagDatabase tag="version2"/>
-    </changeSet>
+  <!--CREATE TABLE customer -->
+  <changeSet id="customer-create" author="mahdi">
+    <createTable tableName="customer">
+      <column name="customer_id" type="int" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="customer_handle" type="varchar(100)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="customer_email" type="varchar(100)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="customer_password" type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="customer_first_name" type="varchar(100)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="customer_last_name" type="varchar(100)"/>
+      <column name="customer_role" type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
 
-    
+  <!-- Create table post-->
+  <changeSet id="post-create" author="mahdi">
+    <createTable tableName="post">
+      <column name="post_id" type="int" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="post_title" type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="post_body" type="text"/>
+      <column name="customer_id" type="int">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <!--Add foreign key to post  -->
+  <changeSet id="post-add-foreignKey" author="mahdi">
+    <addForeignKeyConstraint baseTableName="post" baseColumnNames="customer_id"
+                             constraintName="FK_customer" referencedTableName="customer"
+                             referencedColumnNames="customer_id"/>
+  </changeSet>
+
+
+  <!--    Add tag version2 -->
+  <changeSet id="create-tag-version2" author="mahdi">
+    <tagDatabase tag="version2"/>
+  </changeSet>
 
 
 </databaseChangeLog>

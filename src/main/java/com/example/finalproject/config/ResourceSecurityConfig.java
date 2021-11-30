@@ -1,8 +1,5 @@
 package com.example.finalproject.config;
 
-import com.example.finalproject.security.JwtAuthenticationFilter;
-import com.example.finalproject.security.JwtTokenVerifier;
-import com.google.common.collect.ImmutableList;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,66 +11,60 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import com.example.finalproject.security.JwtAuthenticationFilter;
+import com.example.finalproject.security.JwtTokenVerifier;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ResourceSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .cors()
-                .and()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                .addFilterAfter( new JwtTokenVerifier(), JwtAuthenticationFilter.class)
-                .authorizeRequests()
-                .anyRequest()
-                .authenticated();
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http.cors()
+        .and()
+        .csrf()
+        .disable()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+        .addFilterAfter(new JwtTokenVerifier(), JwtAuthenticationFilter.class)
+        .authorizeRequests()
+        .anyRequest()
+        .authenticated();
+  }
 
-    }
+  @Override
+  public void configure(WebSecurity web) {
+    web.ignoring()
+        .antMatchers(HttpMethod.POST, "/api/customers");
 
+    web.ignoring()
+        .antMatchers(HttpMethod.GET, "/api/posts/**", "/api/customers/{customerId}/**");
+  }
 
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers(HttpMethod.POST,"/api/customers");
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder(10);
+  }
 
-        web.ignoring()
-                .antMatchers(HttpMethod.GET, "/api/posts/**","/api/customers/{customerId}/**");
-
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
-
-////    @Bean
-//    CorsConfigurationSource corsConfigurationSource() {
-//        final CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(ImmutableList.of("http://localhost:4200"));
-//        configuration.setAllowedMethods(ImmutableList.of("HEAD",
-//                "GET", "POST", "PUT", "DELETE", "PATCH","OPTIONS"));
-//
-//        configuration.setAllowCredentials(true);
-//
-//        configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Content-Type"));
-//
-//        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//
-//        return source;
-//
-//    }
-
-
-
+  ////    @Bean
+  //    CorsConfigurationSource corsConfigurationSource() {
+  //        final CorsConfiguration configuration = new CorsConfiguration();
+  //        configuration.setAllowedOrigins(ImmutableList.of("http://localhost:4200"));
+  //        configuration.setAllowedMethods(ImmutableList.of("HEAD",
+  //                "GET", "POST", "PUT", "DELETE", "PATCH","OPTIONS"));
+  //
+  //        configuration.setAllowCredentials(true);
+  //
+  //        configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Content-Type"));
+  //
+  //        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+  //        source.registerCorsConfiguration("/**", configuration);
+  //
+  //        return source;
+  //
+  //    }
 }

@@ -5,12 +5,11 @@ import lombok.Data;
 @Data
 public class PostDTO {
 
-    private Long id;
+  private Long id;
 
-    private String title;
+  private String title;
 
-    private String body;
+  private String body;
 
-    private Long customerId;
-
+  private Long customerId;
 }

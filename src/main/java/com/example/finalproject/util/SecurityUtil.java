@@ -1,29 +1,27 @@
 package com.example.finalproject.util;
 
-import com.example.finalproject.entity.Customer;
-import com.example.finalproject.service.customer.CustomerService;
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import com.example.finalproject.entity.Customer;
+import com.example.finalproject.service.customer.CustomerService;
 
 @Component("securityUtil")
 public class SecurityUtil {
 
-    private final CustomerService customerService;
+  private final CustomerService customerService;
 
-    public SecurityUtil(CustomerService customerService) {
-        this.customerService = customerService;
-    }
+  public SecurityUtil(CustomerService customerService) {
+    this.customerService = customerService;
+  }
 
-    public boolean authorizationCheck(String principal, Long customerId) {
+  public boolean authorizationCheck(String principal, Long customerId) {
 
-        Optional<Customer> optionalCustomer = customerService.findById(customerId);
+    Optional<Customer> optionalCustomer = customerService.findById(customerId);
 
-        return optionalCustomer
-                .map(customer -> customer.getHandle().equals(principal))
-                .orElseGet(() -> false);
-
-    }
-
-
+    return optionalCustomer.map(customer -> customer.getHandle()
+            .equals(principal))
+        .orElseGet(() -> false);
+  }
 }
